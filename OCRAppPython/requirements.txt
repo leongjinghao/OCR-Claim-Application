@@ -3,3 +3,4 @@ pytesseract
 numpy >=1.16.5, <1.23.0
 nltk
 spacy
+pythonnet

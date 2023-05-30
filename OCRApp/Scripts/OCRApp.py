@@ -59,7 +59,7 @@ def main():
     nlp = spacy.load("en_core_web_sm")
 
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    filename = "sample_invoice.png"
+    filename = "D:\GitHub\OCR-Claim-Application\OCRApp\Scripts\sample_invoice.png"
     img = cv2.imread(filename)
 
     """
@@ -98,17 +98,23 @@ def main():
     """
     Named Entity Recognition
     """
+    # dictionary to store the text with the respective named entities
+    docEntity = dict()
+
     for element in linkedWords:
         linkedWord = element[1]
 
         # use spaCy's NER to identify named entities
         doc = nlp(linkedWord)
-        for entity in doc.ents:
-            print(entity.label_, entity.text)
 
-    print(doc.ents)
-    print(type(doc.ents))
-    return(doc.ents)
+        for entity in doc.ents:
+            # print(entity.label_, entity.text)
+            if entity.label_ in docEntity:
+                docEntity[entity.label_].append(entity.text)
+            else:
+                docEntity[entity.label_] = [entity.text]
+
+    return(docEntity)
     # cv2.imshow('img', img)
     # cv2.waitKey(0)
 
