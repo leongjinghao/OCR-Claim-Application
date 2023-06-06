@@ -3,6 +3,7 @@ import pytesseract
 from pytesseract import Output
 import numpy as np
 import spacy
+import json
 
 
 def deskewImage(image):
@@ -53,14 +54,20 @@ def preprocessImage(image):
     return processed_image
 
 
-def main():
+def OCRApp(image_bytes):
     # load the English language model (spaCy)
     # python -m spacy download en_core_web_sm
     nlp = spacy.load("en_core_web_sm")
 
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    filename = "D:\GitHub\OCR-Claim-Application\OCRApp\Scripts\sample_invoice.png"
-    img = cv2.imread(filename)
+    # filename = "D:\GitHub\OCR-Claim-Application\OCRApp\Scripts\sample_invoice.png"
+    # img = cv2.imread(filename)
+
+    # Convert image bytes to numpy array
+    nparr = np.frombuffer(image_bytes, np.uint8)
+
+    # Decode image using OpenCV
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     """
     detect characters using Tesseract OCR
@@ -114,10 +121,6 @@ def main():
             else:
                 docEntity[entity.label_] = [entity.text]
 
-    return(docEntity)
+    return(json.dumps(docEntity))
     # cv2.imshow('img', img)
     # cv2.waitKey(0)
-
-
-if __name__ == "__main__":
-    main()

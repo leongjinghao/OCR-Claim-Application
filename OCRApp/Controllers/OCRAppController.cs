@@ -6,13 +6,14 @@ using Python.Runtime;
 public class OCRAppController : ControllerBase
 {
     [HttpGet("")]
-    public IActionResult Get()
+    public IActionResult Get(IFormFile imageFile)
     {
         // initialise Pythonnet engine
         if (!PythonEngine.IsInitialized)
         {
             Runtime.PythonDLL = @"C:\Users\leong\AppData\Local\Programs\Python\Python39\python39.dll";
             PythonEngine.Initialize();
+	        PythonEngine.BeginAllowThreads();
         }
 
         // Acquire the Python Global Interpreter Lock (GIL)
@@ -22,7 +23,15 @@ public class OCRAppController : ControllerBase
             sys.path.append("Scripts");
 
             dynamic OCRAppScript = Py.Import("OCRApp");
-            var result = OCRAppScript.main();
+            
+            byte[] imageBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                imageFile.CopyTo(memoryStream);
+                imageBytes = memoryStream.ToArray();
+            }
+
+            var result = OCRAppScript.OCRApp(imageBytes);
 
             return Ok(result.ToString());
         }

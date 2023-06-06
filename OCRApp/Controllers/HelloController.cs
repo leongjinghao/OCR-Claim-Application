@@ -23,6 +23,7 @@ public class HelloController : ControllerBase
         {
             Runtime.PythonDLL = @"C:\Users\leong\AppData\Local\Programs\Python\Python39\python39.dll";
             PythonEngine.Initialize();
+	        PythonEngine.BeginAllowThreads();
         }
 
         using (Py.GIL()) // Acquire the Python Global Interpreter Lock (GIL)
