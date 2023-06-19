@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Cors;
 
 namespace OCRApp
 {
@@ -17,11 +18,19 @@ namespace OCRApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.WithOrigins("https://localhost:7262")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
             services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("MyPolicy");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

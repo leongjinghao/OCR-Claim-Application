@@ -5,8 +5,8 @@ using Python.Runtime;
 [ApiController]
 public class OCRAppController : ControllerBase
 {
-    [HttpGet("")]
-    public IActionResult Get(IFormFile imageFile)
+    [HttpPost("")]
+    public IActionResult Post(IFormFile imageFile)
     {
         // initialise Pythonnet engine
         if (!PythonEngine.IsInitialized)
