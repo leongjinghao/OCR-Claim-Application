@@ -261,9 +261,11 @@
                         listSources.forEach(function(listSource) {
                             var options = invoiceData[listSource]
                             
-                            options.forEach(function(option) {
-                                $("<option>").attr("value", option).appendTo(dataList);
-                            });
+                            if (options != undefined) {
+                                options.forEach(function(option) {
+                                    $("<option>").attr("value", option).appendTo(dataList);
+                                });
+                            }
                         });
                         
                         $(this).val(dataList.find('option:first').val());

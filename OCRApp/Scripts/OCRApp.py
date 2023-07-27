@@ -13,19 +13,18 @@ def deskewImage(image):
     :return: Deskew image data
     """
     coords = np.column_stack(np.where(image > 0))
-    angle = cv2.minAreaRect(coords)[-1]
-    # print(angle)
+    (x, y), (rect_w, rect_h), angle = cv2.minAreaRect(coords)
 
     if angle == 90:
         return image
-    elif angle < -45:
-        angle = -(90 + angle)
-    else:
-        angle = -angle
+
+    # consider image is portrait, if image is left-skewed compute angle in opposite angle with inverted direction
+    if rect_w < rect_h:
+        angle = -(90.0 - angle)
 
     (h, w) = image.shape[:2]
     center = (w // 2, h // 2)
-    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    M = cv2.getRotationMatrix2D(center, -angle, 1.0)
     rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
 
     return rotated
@@ -80,8 +79,8 @@ def OCRApp(image_bytes):
     """
     n_boxes = len(data['text'])
     linkedWords = [[(0, 0), ""]]
-    xThreshold = 5
-    yThreshold = 10
+    xThreshold = img.shape[1] * 0.01
+    yThreshold = img.shape[1] * 0.005
 
     for i in range(n_boxes):
         if data["text"][i] == "":
